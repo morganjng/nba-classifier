@@ -6,3 +6,4 @@ tmp/
 data_format
 .auctex-auto/
 .auctex-auto/*
+.ipynb_checkpoints/
