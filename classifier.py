@@ -13,6 +13,9 @@ import torchvision.transforms as transforms
 import matplotlib.pyplot as plt
 
 # Convolutional neural net class
+# This needs work. I think the brunt of the work here is getting from our, currently 3x120x120, jgps and 4x120x120 pngs to a 151 length result vector
+# through convolution. I think the LeNet5 diagram has a good indication of what to do but if any of you have more of an idea let me know and put something in
+# the README.md file.
 class CNN(nn.Module):
     def __init__(self):
         super().__init__()
