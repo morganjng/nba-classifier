@@ -22,16 +22,36 @@ fn main() {
             refactor_data(&names);
         }
         "divide" => {
-            eprintln!("Dividing data up... -- 10% for testing and 20% for validation");
-            divide_data(&names);
+            eprintln!(
+                "{}",
+                format!(
+                    "Dividing data up... -- {} for test, {} for train, {} for validation",
+                    args[2].as_str(),
+                    args[3].as_str(),
+                    args[4].as_str()
+                )
+            );
+            divide_data(
+                &names,
+                args[2].as_str().parse::<usize>().unwrap(),
+                args[3].as_str().parse::<usize>().unwrap(),
+                args[4].as_str().parse::<usize>().unwrap(),
+            );
         }
         _ => return,
     }
 }
 
-fn divide_data(strings: &Vec<String>) {
+fn divide_data(strings: &Vec<String>, test: usize, train: usize, validation: usize) {
     // First I make train/, test/, and validation/ directories, then put official pokemon art into test/{pokedex number}/0.png,
     // and then I put last 20% of data/{pokedex number} into validation/ and last 10% into test/
+    let _removing_old = Command::new("rm")
+        .arg("-rf")
+        .arg("test")
+        .arg("train")
+        .arg("validation")
+        .output()
+        .expect("RM-ing failed.");
     let _making_dir = Command::new("mkdir")
         .arg("test")
         .arg("train")
@@ -55,19 +75,19 @@ fn divide_data(strings: &Vec<String>) {
             .output()
             .expect("Problem making dirs");
         let mut split_up = ls.as_str().lines();
-        let amt = ls.as_str().lines().count() / 10;
+        let amt = ls.as_str().lines().count() / (test + train + validation);
         let mut i = 0;
         eprintln!(
             "{}",
             format!(
                 "For {} validation = {} train = {} test = {}",
                 strings[pdn - 1],
-                amt * 2,
-                amt * 7,
-                amt * 1
+                amt * validation,
+                amt * train,
+                amt * test
             )
         );
-        while i < 2 * amt {
+        while i < validation * amt {
             let _mv = Command::new("cp")
                 .arg(format!(
                     "{}/{}/{}",
@@ -81,7 +101,7 @@ fn divide_data(strings: &Vec<String>) {
             i += 1;
         }
         i = 0;
-        while i < amt {
+        while i < test * amt {
             let _mv = Command::new("cp")
                 .arg(format!(
                     "{}/{}/{}",
@@ -215,7 +235,7 @@ fn generate_names_array() -> Vec<String> {
         "Nidoqueen",
         "NidoranM",
         "Nidorino",
-        "Nidoqueen",
+        "Nidoking",
         "Clefairy",
         "Clefable",
         "Vulpix",
