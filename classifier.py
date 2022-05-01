@@ -16,13 +16,12 @@ import matplotlib.pyplot as plt
 class CNN(nn.Module):
     def __init__(self):
         super().__init__()
-        self.conv1 = nn.Conv2d(3, 6, 5)
+        self.conv1 = nn.Conv2d(3, 6, 6)
         self.pool = nn.MaxPool2d(2, 2)
-        self.conv2 = nn.Conv2d(6, 16, 5)
-        self.fc1 = nn.Linear(16 * 5 * 5, 151)
+        self.conv2 = nn.Conv2d(6, 16, 6)
+        self.fc1 = nn.Linear(729, 151)
 
     def forward(self, x):
-        print(x.shape)
         x = self.pool(F.relu(self.conv1(x)))
         x = self.pool(F.relu(self.conv2(x)))
         x = torch.flatten(x, 1)
@@ -37,7 +36,6 @@ optimizer = optim.SGD(cnn.parameters(), lr=0.001, momentum=0.9)
 
 # Paths to images for training data in our repo
 labels = sorted([int(x) for x in os.listdir("train/")])
-print(labels)
 images = {
     label: [
         "train/" + str(label) + "/" + image_name
@@ -49,7 +47,7 @@ images = {
 # Normalizing so that we can process images easily
 transform = transforms.Compose([transforms.ToTensor(), transforms.Resize([120, 120])])
 
-for i in [1, 4]:
+for i in [2, 4]:
     inputs, labels = (
         [transform(Image.open(path)) for path in images[i]],
         [i for x in images[i]],
