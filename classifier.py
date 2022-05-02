@@ -38,9 +38,9 @@ class CNN(nn.Module):
         self.sm = nn.Softmax()
         self.pool = nn.MaxPool2d(3, 2)
         self.conv1 = nn.Conv2d(3, 48, 11, stride=4)
-        self.conv2 = nn.Conv2d(48, 128, 5, padding=2)
-        self.conv3 = nn.Conv2d(128, 192, 5, padding=1)
-        self.conv5 = nn.Conv2d(192, 128, 5, padding=1)
+        self.conv2 = nn.Conv2d(48, 128, 9, padding=2)
+        self.conv3 = nn.Conv2d(128, 192, 7, padding=1)
+        self.conv5 = nn.Conv2d(192, 151, 3)
         self.lin1 = nn.Linear(1152, 151)
 
     def forward(self, x):
@@ -52,7 +52,7 @@ class CNN(nn.Module):
         x = F.relu(self.conv5(x))
         x = F.relu(self.pool(x))
         x = torch.flatten(x)
-        x = F.relu(self.lin1(x))
+        # x = F.relu(self.lin1(x))
         x = F.relu(self.sm(x))
         return x
 
