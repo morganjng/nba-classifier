@@ -17,7 +17,7 @@ transform = transforms.Compose(
     [
         transforms.ToTensor(),
         transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
-        transforms.Resize([112, 112]),
+        transforms.Resize([224, 224]),
     ]
 )
 
@@ -35,13 +35,13 @@ def one_hot_tensor(x):
 class CNN(nn.Module):
     def __init__(self):
         super().__init__()
+        self.sm = nn.Softmax()
         self.pool = nn.MaxPool2d(3, 2)
         self.conv1 = nn.Conv2d(3, 48, 11, stride=4)
         self.conv2 = nn.Conv2d(48, 128, 5, padding=2)
-        self.conv3 = nn.Conv2d(128, 192, 3, padding=1)
-        self.conv4 = nn.Conv2d(192, 192, 3, padding=1)
-        self.conv5 = nn.Conv2d(192, 128, 3, padding=1)
-        self.lin1 = nn.Linear(512, 151)
+        self.conv3 = nn.Conv2d(128, 192, 5, padding=1)
+        self.conv5 = nn.Conv2d(192, 128, 5, padding=1)
+        self.lin1 = nn.Linear(1152, 151)
 
     def forward(self, x):
         x = F.relu(self.conv1(x))
@@ -49,11 +49,11 @@ class CNN(nn.Module):
         x = self.conv2(x)
         x = F.relu(self.pool(x))
         x = self.conv3(x)
-        x = F.relu(self.conv4(x))
         x = F.relu(self.conv5(x))
         x = F.relu(self.pool(x))
         x = torch.flatten(x)
         x = F.relu(self.lin1(x))
+        x = F.relu(self.sm(x))
         return x
 
 
@@ -74,12 +74,12 @@ def train():
         )
 
         optimizer.zero_grad()
-
         for j in range(len(inputs)):
             x = inputs[j]
             y = labels[j]
             out = cnn(x)
-            opt = loss(out, y)
+            # print(out)
+            opt = loss(out, torch.tensor(i - 1))
             opt.backward()
             optimizer.step()
 
@@ -112,9 +112,6 @@ def test():
             x = inputs[j]
             y = labels[j]
             res = cnn(x)
-            print(res)
-            print(y)
-            print("++++++++++++++++++++++++++==")
             print("True " + str(torch.argmax(y)) + " Guess " + str(torch.argmax(res)))
             if torch.argmax(res) == torch.argmax(y):
                 correct += 1
@@ -139,5 +136,13 @@ optimizer = optim.SGD(cnn.parameters(), lr=0.001, momentum=0.9)
 # Paths to images for training data in our repo
 pdns = sorted([int(x) for x in os.listdir("train/")])
 
+train()
+test()
+train()
+test()
+train()
+test()
+train()
+test()
 train()
 test()
