@@ -4,8 +4,6 @@
  
  -- Report.pdf         : our LaTeX typeset report for our project
  
- -- Report.tex         : our LaTeX source file for our report
- 
  -- all_seasons.csv    : the dataset we used (from Kaggle)
  
  -- neural_trained.pth : PyTorch state_dict for NeuralNet
